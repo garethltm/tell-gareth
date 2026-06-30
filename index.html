@@ -26,12 +26,12 @@
       .container {
         max-width: 800px;
         margin: 0 auto;
-        padding: 32px 20px 48px;
+        padding: 24px 16px 48px;
       }
 
       .hero {
         text-align: center;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
       }
 
       .hero h1 {
@@ -49,7 +49,7 @@
         background: rgba(17, 24, 39, 0.9);
         border: 1px solid rgba(255,255,255,0.08);
         border-radius: 18px;
-        padding: 18px;
+        padding: 16px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.25);
         margin-bottom: 16px;
       }
@@ -88,6 +88,29 @@
         padding: 14px;
         border-radius: 14px;
         background: rgba(255,255,255,0.04);
+      }
+
+      @media (max-width: 640px) {
+        .container {
+          padding: 18px 12px 36px;
+        }
+
+        .hero img {
+          height: 64px !important;
+        }
+
+        .card {
+          padding: 14px;
+          border-radius: 16px;
+        }
+
+        input, textarea, button {
+          font-size: 16px;
+        }
+
+        button {
+          width: 100%;
+        }
       }
 
       .post h3 { margin: 0 0 6px; font-size: 1.05rem; }

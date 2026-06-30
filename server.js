@@ -181,6 +181,7 @@ app.get('/admin', async (req, res) => {
             align-items: center;
             gap: 12px;
             margin-bottom: 18px;
+            flex-wrap: wrap;
           }
           h1 { margin: 0; font-size: 1.8rem; }
           .sub { color: #94a3b8; margin-top: 4px; }
@@ -200,7 +201,7 @@ app.get('/admin', async (req, res) => {
             border: 1px solid rgba(255,255,255,0.08);
             box-shadow: 0 10px 30px rgba(0,0,0,0.25);
           }
-          .post-top { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px; }
+          .post-top { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px; flex-wrap: wrap; }
           .name { font-size: 1.05rem; font-weight: 700; }
           .meta { color: #94a3b8; font-size: 0.9rem; margin-top: 3px; }
           .pill {
@@ -212,6 +213,14 @@ app.get('/admin', async (req, res) => {
             border-radius: 999px;
           }
           p { white-space: pre-wrap; margin: 8px 0 0; line-height: 1.55; color: #e2e8f0; }
+
+          @media (max-width: 640px) {
+            body { padding: 14px; }
+            .hero { flex-direction: column; align-items: flex-start; }
+            .link { width: 100%; text-align: center; }
+            .post { padding: 14px; }
+            .pill { margin-top: 6px; }
+          }
         </style>
       </head>
       <body>

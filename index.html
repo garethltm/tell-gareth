@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tell Me Anything</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #111827;
+        --text: #f8fafc;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --accent-2: #a78bfa;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, Arial, sans-serif;
+        background: linear-gradient(135deg, var(--bg), #1e293b);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 32px 20px 48px;
+      }
+
+      .hero {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .hero h1 {
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        margin-bottom: 8px;
+      }
+
+      .hero p {
+        color: var(--muted);
+        max-width: 680px;
+        margin: 0 auto;
+      }
+
+      .card {
+        background: rgba(17, 24, 39, 0.9);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        margin-bottom: 16px;
+      }
+
+      form {
+        display: grid;
+        gap: 12px;
+      }
+
+      input, textarea, button {
+        font: inherit;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.12);
+      }
+
+      input, textarea {
+        width: 100%;
+        padding: 12px 14px;
+        background: #0b1220;
+        color: var(--text);
+      }
+
+      textarea { min-height: 110px; resize: vertical; }
+
+      button {
+        padding: 12px 16px;
+        cursor: pointer;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        color: white;
+        font-weight: 700;
+        border: none;
+      }
+
+      .post-list { display: grid; gap: 12px; margin-top: 18px; }
+      .post {
+        padding: 14px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.04);
+      }
+
+      .post h3 { margin: 0 0 6px; font-size: 1.05rem; }
+      .post p { margin: 0; color: #e2e8f0; line-height: 1.5; }
+      .meta { color: var(--muted); font-size: 0.85rem; margin-bottom: 6px; }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <section class="hero">
+        <div style="display:flex;align-items:center;gap:18px;justify-content:center;margin-bottom:16px">
+          <img src="assets/logo-text.svg" alt="Tell Gareth" style="height:80px;" />
+        </div>
+        <p>Share something interesting, weird, useful, or personal. This is a simple place for short stories, observations, or tiny revelations.</p>
+      </section>
+
+      <section class="card">
+        <form id="post-form">
+          <input id="name" placeholder="(optional) your name — will be hidden" />
+          <textarea id="content" placeholder="What do you want to share?" required></textarea>
+          <button type="submit">Post it</button>
+        </form>
+        <p style="color: var(--muted); font-size:0.9rem; margin-top:8px;">Posts are anonymous by default. A random "User #" is assigned when you post.</p>
+      </section>
+
+      <section class="card">
+        <h2>Recent posts</h2>
+        <div id="post-list" class="post-list"></div>
+      </section>
+    </main>
+
+    <script>
+      // Frontend now posts to the Flask API. Public posts are hidden; only admin can view them at /admin?token=YOUR_TOKEN
+      const form = document.getElementById('post-form');
+      const nameInput = document.getElementById('name');
+      const contentInput = document.getElementById('content');
+      const postList = document.getElementById('post-list');
+
+      // Replace public post list with a privacy message
+      postList.innerHTML = '<div class="post"><p style="color:var(--muted);">Posts are private. Only the site admin can view recent posts.</p></div>';
+
+      function showMessage(msg, isError) {
+        const el = document.createElement('div');
+        el.className = 'card';
+        el.style.marginTop = '12px';
+        el.textContent = msg;
+        if (isError) el.style.color = '#fecaca';
+        postList.parentNode.insertBefore(el, postList.nextSibling);
+        setTimeout(() => el.remove(), 4000);
+      }
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const name = nameInput.value.trim();
+        const content = contentInput.value.trim();
+        if (!content) return;
+
+        try {
+          const resp = await fetch('/api/posts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, content })
+          });
+          if (!resp.ok) throw new Error(await resp.text());
+          showMessage('Posted — thank you!');
+          form.reset();
+        } catch (err) {
+          showMessage('Failed to post: ' + err.message, true);
+        }
+      });
+    </script>
+  </body>
+</html>

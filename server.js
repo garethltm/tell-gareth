@@ -59,6 +59,10 @@ app.get('/', (req, res) => {
   res.sendFile(indexPath);
 });
 
+app.get('/health', (req, res) => {
+  res.json({ ok: true, dbConfigured: Boolean(pool) });
+});
+
 app.get('/assets/:file(*)', (req, res) => {
   const file = req.params.file;
   const filePath = path.join(assetsDir, file);
@@ -88,6 +92,10 @@ app.post('/api/posts', async (req, res) => {
 
     if (!contentTrimmed) {
       return res.status(400).json({ error: 'content required' });
+    }
+
+    if (!pool) {
+      return res.status(503).json({ error: 'Database is not configured yet' });
     }
 
     await ensureDb();
@@ -120,6 +128,10 @@ app.get('/admin', async (req, res) => {
 
     if (token !== ADMIN_TOKEN) {
       return res.status(403).send('Forbidden');
+    }
+
+    if (!pool) {
+      return res.status(503).send('Database is not configured yet. Add DATABASE_URL in Vercel to enable persistence.');
     }
 
     await ensureDb();
@@ -250,3 +262,4 @@ if (require.main === module) {
 }
 
 module.exports = app;
+module.exports.handler = app;
